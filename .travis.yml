@@ -1,7 +1,9 @@
 ---
 
 language: node_js
-before_script: npm i -g eslint
+before_script:
+  - npm i -g eslint
+  - make install
 node_js:
   - node
 
