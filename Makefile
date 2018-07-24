@@ -5,7 +5,6 @@ start:
 	npm run start
 
 build:
-	rm -rf dist
 	npm run build:dev
 
 test:
