@@ -2,7 +2,8 @@ install:
 	npm install
 
 start:
-	npm run build:watch
+	npm run start
+
 build:
 	rm -rf dist
 	npm run build:dev
