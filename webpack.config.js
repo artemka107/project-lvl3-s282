@@ -1,5 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 
@@ -10,21 +10,21 @@ module.exports = {
     vendor: './src/vendor.js',
   },
   output: {
-    filename: '[name].bunde.js',
-    path: path.resolve(__dirname, 'dist', 'scripts'),
+    filename: 'js/[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
   },
   devServer: {
-    contentBase: './dist',
+    contentBase: path.resolve(__dirname, 'dist'),
     watchContentBase: true,
-    publicPath: '/dist/',
+    hot: true,
   },
   plugins: [
+    new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
       title: 'Rss reader',
       template: './src/view/index.pug',
-      filename: 'index.html',
+      filename: path.resolve(__dirname, 'dist/index.html'),
     }),
-    new HtmlWebpackHarddiskPlugin(),
     new webpack.HotModuleReplacementPlugin(),
   ],
   module: {

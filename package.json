@@ -30,6 +30,7 @@
     "babel-loader": "^7.1.5",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
+    "clean-webpack-plugin": "^0.1.19",
     "css-loader": "^1.0.0",
     "eslint-config-airbnb": "^17.0.0",
     "eslint-plugin-babel": "^5.1.0",
