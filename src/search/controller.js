@@ -1,9 +1,6 @@
 import { isURL, isEmpty } from 'validator';
 import axios from 'axios';
-import { changeState, getPropertyState } from '../model/search';
-
-const form = document.querySelector('.search-form');
-const searchInput = document.querySelector('.search-form-input');
+import { changeState, getPropertyState } from './model';
 
 const getRssChanel = (url) => {
   const proxyCors = 'https://cors-anywhere.herokuapp.com/';
@@ -51,12 +48,18 @@ const validateSearchForm = (searchString) => {
 
 const onSubmitForm = (event) => {
   event.preventDefault();
+
+  const searchInput = document.querySelector('.search-form-input');
   const url = searchInput.value;
   const isValidForm = validateSearchForm(url);
+
   if (isValidForm) {
     getRssChanel(url);
   }
 };
 
 
-form.addEventListener('submit', onSubmitForm);
+export default () => {
+  const form = document.querySelector('.search-form');
+  form.addEventListener('submit', onSubmitForm);
+};

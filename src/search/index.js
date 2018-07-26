@@ -1,2 +1,5 @@
-import './model/search';
-import './controller/search';
+import init from './controller';
+import { initListenToState } from './view';
+
+init();
+initListenToState();
