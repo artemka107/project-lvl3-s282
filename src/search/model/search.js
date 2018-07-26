@@ -24,8 +24,10 @@ export const getPropertyState = key => state[key];
 const createHtmlListItem = (elem) => {
   const li = document.createElement('li');
   const a = document.createElement('a');
-  a.innerHTML = `${elem.description._cdata}`;
-  a.setAttribute('href', elem.link._text);
+  const linkText = elem.getElementsByTagName('description')[0].textContent;
+  const linkHref = elem.getElementsByTagName('link')[0].textContent;
+  a.innerHTML = linkText;
+  a.setAttribute('href', linkHref);
   li.appendChild(a);
   return li;
 };
@@ -43,6 +45,7 @@ watch(state, 'errorMessage', () => {
 });
 
 watch(state, 'listOfRssFeeds', () => {
+  rssContainer.innerHTML = '';
   state.listOfRssFeeds.forEach((elem) => {
     const ul = document.createElement('ul');
     elem.content.forEach((article) => {

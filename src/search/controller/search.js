@@ -1,6 +1,5 @@
 import { isURL, isEmpty } from 'validator';
 import axios from 'axios';
-import convertToJson from 'xml-js';
 import { changeState, getPropertyState } from '../model/search';
 
 const form = document.querySelector('.search-form');
@@ -10,10 +9,11 @@ const getRssChanel = (url) => {
   const proxyCors = 'https://cors-anywhere.herokuapp.com/';
   axios.get(`${proxyCors}${url}`)
     .then(({ data }) => {
-      const { rss } = convertToJson.xml2js(data, { compact: true });
+      const parser = new DOMParser();
+      const rss = parser.parseFromString(data, 'application/xml');
       const newChannel = {
         url,
-        content: rss.channel.item,
+        content: [...rss.getElementsByTagName('item')],
       };
       changeState({ listOfRssFeeds: [...getPropertyState('listOfRssFeeds'), newChannel] });
     });
