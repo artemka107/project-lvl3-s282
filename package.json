@@ -19,10 +19,14 @@
   },
   "homepage": "https://github.com/artemka107/rss-reader#readme",
   "dependencies": {
+    "axios": "^0.18.0",
     "bootstrap": "^4.1.2",
+    "javascript-state-machine": "^3.1.0",
     "jquery": "^3.3.1",
     "popper.js": "^1.14.3",
-    "webpack": "^4.16.2"
+    "validator": "^10.4.0",
+    "webpack": "^4.16.2",
+    "xml-js": "^1.6.7"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
