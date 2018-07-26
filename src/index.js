@@ -1,2 +1,5 @@
-import './js/search';
 import './sass/index.scss';
+
+import 'bootstrap';
+
+import './search';

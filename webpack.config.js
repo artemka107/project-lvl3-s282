@@ -5,12 +5,7 @@ const webpack = require('webpack');
 
 module.exports = {
   mode: 'development',
-  entry: {
-    index: './src/index.js',
-    vendor: './src/vendor.js',
-  },
   output: {
-    filename: 'js/[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
   devServer: {
@@ -22,7 +17,7 @@ module.exports = {
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
       title: 'Rss reader',
-      template: './src/view/index.pug',
+      template: './src/index.pug',
       filename: path.resolve(__dirname, 'dist/index.html'),
     }),
     new webpack.HotModuleReplacementPlugin(),

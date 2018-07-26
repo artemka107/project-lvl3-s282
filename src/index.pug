@@ -2,6 +2,14 @@ html
   head
     title Rss reader
   body
+    div.progress.d-none
+      div.progress-bar.progress-bar-striped.progress-bar-animated(
+        role='progressbar'
+        aria-valuenow='100'
+        aria-valuemin='0'
+        aria-valuemax='100'
+        style='width: 100%'
+      )
     nav.navbar.navbar-expand-lg.navbar-light.bg-light.pr-1
       div.container
         h1 Rss reader
@@ -13,19 +21,8 @@ html
               placeholder='Enter rss feed'
               required
             )
-            div.valid-feedback
+            div.invalid-feedback
           button.btn.btn-outline-success.col-lg-4(type='submit') Search
     div.jumbotron
-      div.container
-        h1.display-4 Hello, world!
-        p.lead
-          | This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.
-        hr.my-4
-        p
-          | It uses utility classes for typography and spacing to space content out within the larger container.
-        a.btn.btn-primary.btn-lg(href='#', role='button') Learn more
-
-    div.overlay
-      div.preloader
-    script(src='/js/vendor.bundle.js')
-    script(src='/js/index.bundle.js')
+      div.container.rss-container
+        
