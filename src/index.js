@@ -1,4 +1,5 @@
 import './sass/index.scss';
 import 'bootstrap';
+import init from './search';
 
-import './search';
+init();

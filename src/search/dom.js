@@ -1,29 +1,28 @@
 import { watch } from 'melanke-watchjs';
-import { state } from './model';
+import { state } from './state';
+import { getListItem } from './templates';
 
-export const getRssArticleInfo = (article) => {
-  const linkText = article.getElementsByTagName('description')[0].textContent;
-  const linkHref = article.getElementsByTagName('link')[0].textContent;
+export const getRssArticleInfo = (rssArticle) => {
+  const linkText = rssArticle.getElementsByTagName('description')[0].textContent;
+  const linkHref = rssArticle.getElementsByTagName('link')[0].textContent;
   return { linkText, linkHref };
 };
 
-export const createHtmlLinkToArticle = (article) => {
-  const a = document.createElement('a');
-  const { linkText, linkHref } = getRssArticleInfo(article);
-  a.innerHTML = linkText;
-  a.setAttribute('href', linkHref);
-  return a;
+export const createArticleItem = (rssArticle) => {
+  const { linkText, linkHref } = getRssArticleInfo(rssArticle);
+  const listItem = getListItem(linkText, linkHref);
+  return listItem;
 };
 
 export const createArticlesList = (rssFeed) => {
-  const ul = document.createElement('ul');
-  rssFeed.content.forEach((article) => {
-    const a = createHtmlLinkToArticle(article);
-    const li = document.createElement('li');
-    li.appendChild(a);
-    ul.appendChild(li);
+  const articlesContainer = document.createElement('div');
+  const articles = rssFeed.content.map((rssArticle) => {
+    const article = createArticleItem(rssArticle);
+    return article;
   });
-  return ul;
+  articlesContainer.classList.add('list-group');
+  articlesContainer.innerHTML = articles.join('');
+  return articlesContainer;
 };
 
 export const createHtmlListOfChannels = (targetState) => {

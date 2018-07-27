@@ -1,5 +1,7 @@
-import init from './controller';
-import { initListenToState } from './view';
+import bindEvents from './controller';
+import { initListenToState } from './dom';
 
-init();
-initListenToState();
+export default () => {
+  bindEvents();
+  initListenToState();
+};

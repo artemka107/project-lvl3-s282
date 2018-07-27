@@ -27,8 +27,7 @@
     "melanke-watchjs": "^1.4.3",
     "popper.js": "^1.14.3",
     "validator": "^10.4.0",
-    "webpack": "^4.16.2",
-    "xml-js": "^1.6.7"
+    "webpack": "^4.16.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

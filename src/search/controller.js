@@ -1,6 +1,6 @@
 import { isURL, isEmpty } from 'validator';
 import axios from 'axios';
-import { changeState, getPropertyState } from './model';
+import { changeState, getPropertyState } from './state';
 
 const getRssChanel = (url) => {
   const proxyCors = 'https://cors-anywhere.herokuapp.com/';
