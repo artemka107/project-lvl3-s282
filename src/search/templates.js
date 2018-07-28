@@ -24,4 +24,3 @@ export const getModalTemplate = (description = '') => `
     </div>
   </div>
 `;
-
