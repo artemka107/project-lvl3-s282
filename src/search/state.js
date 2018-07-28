@@ -1,14 +1,16 @@
 import { forIn } from 'lodash';
 
-export const state = {
+const initState = () => ({
   isValidForm: true,
   errorMessage: '',
   searchString: '',
-  listOfRssFeeds: [],
+  rssChannels: [],
   isLoading: false,
   isActiveModal: false,
   activeArticleId: '',
-};
+});
+
+export const state = initState();
 
 export const changeState = (data) => {
   forIn(data, (value, key) => {

@@ -5,20 +5,37 @@ import { isURL, isEmpty } from 'validator';
 import { changeState, getPropertyState } from './state';
 
 const updateChannels = (newChannel) => {
-  changeState({ listOfRssFeeds: [...getPropertyState('listOfRssFeeds'), newChannel] });
+  changeState({ rssChannels: [...getPropertyState('rssChannels'), newChannel] });
+};
+
+const getArticleInfoByTag = (rssArticle) => {
+  const tags = ['title', 'description', 'link'];
+  return tags.reduce((acc, tagName) => {
+    const [tagNode] = rssArticle.getElementsByTagName(tagName);
+    const value = tagNode.textContent;
+    return { ...acc, [tagName]: value };
+  }, {});
+};
+
+const parseRssString = (rssString) => {
+  const parser = new DOMParser();
+  const rss = parser.parseFromString(rssString, 'application/xml');
+  const rssArticles = [...rss.getElementsByTagName('item')]
+    .map(elem => ({
+      article: getArticleInfoByTag(elem),
+      localId: uniqueId(),
+    }));
+  return rssArticles;
 };
 
 const getRssChanel = (url) => {
   const proxyCors = 'https://cors-anywhere.herokuapp.com/';
   axios.get(`${proxyCors}${url}`)
-    .then(({ data }) => {
-      const parser = new DOMParser();
-      const rss = parser.parseFromString(data, 'application/xml');
-      const updatedChannelItems = [...rss.getElementsByTagName('item')]
-        .map(elem => ({ rssArticle: elem, localId: uniqueId() }));
+    .then(({ data: rssString }) => {
+      const articles = parseRssString(rssString);
       const newChannel = {
         url,
-        content: updatedChannelItems,
+        articles,
       };
       updateChannels(newChannel);
     });
@@ -34,7 +51,7 @@ const messages = [
     value: 'Incorrect chanel URL',
   },
   {
-    check: searchString => getPropertyState('listOfRssFeeds').find(({ url }) => url === searchString),
+    check: searchString => getPropertyState('rssChannels').find(({ url }) => url === searchString),
     value: 'This URL is already exists',
   },
 ];

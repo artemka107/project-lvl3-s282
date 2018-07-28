@@ -3,43 +3,30 @@ import $ from 'jquery';
 import { state } from './state';
 import { getArticleTemplate, getModalTemplate } from './templates';
 
-export const getRssArticleInfo = (rssArticle) => {
-  const tags = ['title', 'description', 'link'];
-  return tags.reduce((acc, tagName) => {
-    const value = rssArticle.getElementsByTagName(tagName)[0].textContent;
-    return { ...acc, [tagName]: value };
-  }, {});
-};
-
-
-export const createArticleItem = (rssArticle, localId) => {
-  const { title, link } = getRssArticleInfo(rssArticle);
-  return getArticleTemplate(title, link, localId);
-};
-
-export const createArticlesList = (rssFeed) => {
+export const createArticlesList = (rssChannel) => {
   const articlesContainer = document.createElement('div');
-  const articles = rssFeed.content.map(({ rssArticle, localId }) => {
-    const article = createArticleItem(rssArticle, localId);
-    return article;
+  const articles = rssChannel.articles.map(({ article, localId }) => {
+    const articleHtml = getArticleTemplate(article.title, article.link, localId);
+    return articleHtml;
   });
   articlesContainer.classList.add('list-group');
   articlesContainer.innerHTML = articles.join('');
   return articlesContainer;
 };
 
-export const createFeedsHtml = (targetState) => {
-  const result = targetState.listOfRssFeeds.map((rssFeed) => {
-    const articlesList = createArticlesList(rssFeed);
+export const createChannelsHtml = (targetState) => {
+  const channelsList = targetState.rssChannels.map((channel) => {
+    const articlesList = createArticlesList(channel);
     return articlesList.outerHTML;
   });
-  return result.join('');
+  const channelsHtml = channelsList.join('');
+  return channelsHtml;
 };
 
-export const renderFeedLists = (targetState) => {
+export const renderRssChannels = (targetState) => {
   const rssContainer = document.querySelector('.rss-container');
 
-  rssContainer.innerHTML = createFeedsHtml(targetState);
+  rssContainer.innerHTML = createChannelsHtml(targetState);
 };
 
 export const showProgressBar = () => {
@@ -54,8 +41,8 @@ export const hideProgressBar = () => {
 
 export const getActiveArticle = (targetState) => {
   const { activeArticleId } = targetState;
-  const activeArticle = targetState.listOfRssFeeds.reduce((acc, rssFeed) => {
-    const newAcc = rssFeed.content.find(article => article.localId === activeArticleId);
+  const activeArticle = targetState.rssChannels.reduce((acc, channel) => {
+    const newAcc = channel.articles.find(article => article.localId === activeArticleId);
     return newAcc || acc;
   }, {});
   return activeArticle;
@@ -63,9 +50,8 @@ export const getActiveArticle = (targetState) => {
 
 export const renderModal = (targetState) => {
   const modal = document.querySelector('.modal-dialog');
-  const { rssArticle } = getActiveArticle(targetState);
-  const { description } = getRssArticleInfo(rssArticle);
-  modal.innerHTML = getModalTemplate(description);
+  const { article } = getActiveArticle(targetState);
+  modal.innerHTML = getModalTemplate(article.description);
 };
 
 export const initListenToState = () => {
@@ -95,8 +81,8 @@ export const initListenToState = () => {
     }
   });
 
-  watch(state, 'listOfRssFeeds', () => {
-    renderFeedLists(state);
+  watch(state, 'rssChannels', () => {
+    renderRssChannels(state);
     hideProgressBar();
   });
 };
