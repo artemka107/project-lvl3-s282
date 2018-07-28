@@ -1,6 +1,12 @@
-import { isURL, isEmpty } from 'validator';
 import axios from 'axios';
+import $ from 'jquery';
+import { uniqueId } from 'lodash';
+import { isURL, isEmpty } from 'validator';
 import { changeState, getPropertyState } from './state';
+
+const updateChannels = (newChannel) => {
+  changeState({ listOfRssFeeds: [...getPropertyState('listOfRssFeeds'), newChannel] });
+};
 
 const getRssChanel = (url) => {
   const proxyCors = 'https://cors-anywhere.herokuapp.com/';
@@ -8,11 +14,13 @@ const getRssChanel = (url) => {
     .then(({ data }) => {
       const parser = new DOMParser();
       const rss = parser.parseFromString(data, 'application/xml');
+      const updatedChannelItems = [...rss.getElementsByTagName('item')]
+        .map(elem => ({ rssArticle: elem, localId: uniqueId() }));
       const newChannel = {
         url,
-        content: [...rss.getElementsByTagName('item')],
+        content: updatedChannelItems,
       };
-      changeState({ listOfRssFeeds: [...getPropertyState('listOfRssFeeds'), newChannel] });
+      updateChannels(newChannel);
     });
 };
 
@@ -42,7 +50,7 @@ const validateSearchForm = (searchString) => {
     changeState({ errorMessage, isValidForm: false });
     return false;
   }
-  changeState({ errorMessage: '', isValidForm: true });
+  changeState({ errorMessage: '', isValidForm: true, isLoading: true });
   return true;
 };
 
@@ -58,8 +66,25 @@ const onSubmitForm = (event) => {
   }
 };
 
+const setActiveArticle = (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const { target } = event;
+
+  if (target.classList.contains('btn')) {
+    const localId = target.getAttribute('data-localId');
+    changeState({ activeArticleId: localId, isActiveModal: true });
+  }
+};
+
 
 export default () => {
   const form = document.querySelector('.search-form');
+  const rssContainer = document.querySelector('.rss-container');
+  rssContainer.addEventListener('click', setActiveArticle);
   form.addEventListener('submit', onSubmitForm);
+  $('.modal').on('hidden.bs.modal', () => {
+    changeState({ isActiveModal: false });
+  });
 };

@@ -5,6 +5,9 @@ export const state = {
   errorMessage: '',
   searchString: '',
   listOfRssFeeds: [],
+  isLoading: false,
+  isActiveModal: false,
+  activeArticleId: '',
 };
 
 export const changeState = (data) => {
