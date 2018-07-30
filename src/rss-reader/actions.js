@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { flatten } from 'lodash'
+import { flatten } from 'lodash';
 import parseXml from './xmlParser';
 
 export const getRssChannel = (url) => {

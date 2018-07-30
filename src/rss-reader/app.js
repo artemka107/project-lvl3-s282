@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import { watch } from 'melanke-watchjs';
 import initState from './state';
-import { getUpdatedArticles } from './actions';
 import {
   showInvalidMessage,
   removeInvalidMessage,
@@ -24,7 +23,8 @@ import {
 
 export const getActiveArticle = (targetState) => {
   const { activeArticleId } = targetState.data;
-  const activeArticle = targetState.data.articles.find(article => article.localId === activeArticleId);
+  const activeArticle = targetState.data.articles
+    .find(article => article.localId === activeArticleId);
   return activeArticle;
 };
 
