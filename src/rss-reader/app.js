@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { watch } from 'melanke-watchjs';
 import initState from './state';
-import { updateChannels } from './actions';
+import { getUpdatedArticles } from './actions';
 import {
   showInvalidMessage,
   removeInvalidMessage,
@@ -9,10 +9,12 @@ import {
   hideProgressBar,
   renderModal,
   showModal,
-  renderChannels,
+  renderArticles,
   showAlert,
   hideAlert,
   changeInputText,
+  disableSearchBtn,
+  unDisableSearchBtn,
 } from './dom';
 import {
   onSubmitForm,
@@ -22,10 +24,7 @@ import {
 
 export const getActiveArticle = (targetState) => {
   const { activeArticleId } = targetState.data;
-  const activeArticle = targetState.data.rssChannels.reduce((acc, channel) => {
-    const newAcc = channel.articles.find(article => article.localId === activeArticleId);
-    return newAcc || acc;
-  }, {});
+  const activeArticle = targetState.data.articles.find(article => article.localId === activeArticleId);
   return activeArticle;
 };
 
@@ -73,16 +72,23 @@ export const watchState = (state) => {
 
   watch(state.data, 'isActiveModal', (prop, action, isActiveModal) => {
     if (isActiveModal) {
-      const { article } = getActiveArticle(state);
+      const article = getActiveArticle(state);
       renderModal(article.description);
       showModal();
     }
   });
 
-  watch(state.data, 'rssChannels', () => {
-    renderChannels(state.data.rssChannels);
+  watch(state.data, 'updatedArticles', () => {
+    renderArticles(state.data.updatedArticles);
     hangEventsOnButtons(state);
-    setInterval(updateChannels, 5000, state.data.rssChannels, state);
+  });
+
+  watch(state.data, 'isDisabledSearch', (prop, action, isDisabledSearch) => {
+    if (isDisabledSearch) {
+      disableSearchBtn();
+    } else {
+      unDisableSearchBtn();
+    }
   });
 };
 

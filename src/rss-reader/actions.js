@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { flatten } from 'lodash'
 import parseXml from './xmlParser';
 
 export const getRssChannel = (url) => {
@@ -7,43 +8,28 @@ export const getRssChannel = (url) => {
   return axios.get(`${proxyCors}${url}`)
     .then(({ data: rssString }) => {
       const articles = parseXml(rssString);
-      const newChannel = {
-        url,
-        articles,
-      };
-      return newChannel;
+      return articles;
     });
 };
 
-export const getUpdatedChannels = channels =>
+export const updateChannels = channels =>
   channels.reduce((acc, channel) =>
-    getRssChannel(channel.url)
-      .then((newChannel) => {
-        const [lastUpdatedArticle] = channel.articles;
-        const lastArticleTime = new Date(lastUpdatedArticle.pubDate).valueOf();
-        const newArticles = newChannel.articles.filter((article) => {
-          const newArticleTime = new Date(article.pubDate).valueOf();
-          return newArticleTime > lastArticleTime;
-        });
-        const hasUpdatedArticles = newArticles.length;
-        const updatedChannel = {
-          url: channel.url,
-          articles: newArticles,
-        };
-        return hasUpdatedArticles ? [...acc, updatedChannel] : acc;
-      }), []);
+    acc.concat(getRssChannel(channel)), []);
 
-export const updateChannels = (channels, state) => {
-  const updatedChannels = getUpdatedChannels(channels);
-  updatedChannels.then((newChannels) => {
-    const newRssChannels = channels.map((oldChannel) => {
-      const updatedChannel = newChannels.find(newChannel => newChannel.url === oldChannel.url);
-      const newElement = {
-        url: oldChannel.url,
-        articles: [...updatedChannel.articles, ...oldChannel.articles],
-      };
-      return updatedChannel ? newElement : oldChannel;
-    });
-    state.changeState({ rssChannels: newRssChannels });
-  });
+export const getUpdatedArticles = (state) => {
+  const updatedChannels = updateChannels(state.data.channels);
+  return Promise.all(updatedChannels)
+    .then((newArticlesData) => {
+      const newArticles = flatten(newArticlesData);
+      const updatedArticles = newArticles.reduce((acc, newArticle) => {
+        const hasTheSameArticle = state.data.articles
+          .find(oldArticle => oldArticle.link === newArticle.link);
+        return hasTheSameArticle ? acc : [...acc, newArticle];
+      }, []);
+      state.changeState({
+        updatedArticles,
+        articles: newArticles,
+      });
+    })
+    .finally(() => setTimeout(getUpdatedArticles, 5000, state));
 };

@@ -27,27 +27,21 @@ export const createArticle = (link, title, localId) => {
   return articleWrapper;
 };
 
-export const createArticlesList = (articles, url) => {
+export const renderArticles = (articles) => {
+  const channelsContainer = document.querySelector('.rss-container');
   const articlesList = document.createElement('div');
   articlesList.classList.add('list-group');
-  articlesList.setAttribute('data-channel-url', url);
 
   articles.forEach(({ link, title, localId }) => {
-    const articleElement = createArticle(link, title, localId);
-    articlesList.append(articleElement);
+    const article = createArticle(link, title, localId);
+    articlesList.appendChild(article);
   });
-
-  return articlesList;
-};
-
-export const renderChannels = (channels) => {
-  const channelsContainer = document.querySelector('.rss-container');
-  channelsContainer.innerHTML = '';
-  channels.forEach(({ articles, url }) => {
-    const articlesList = createArticlesList(articles, url);
+  const lastGroup = channelsContainer.firstChild;
+  if (lastGroup) {
+    channelsContainer.insertBefore(articlesList, lastGroup);
+  } else {
     channelsContainer.appendChild(articlesList);
-  });
-  return channelsContainer;
+  }
 };
 
 export const renderModal = (description) => {
@@ -112,4 +106,14 @@ export const showAlert = () => {
 export const hideAlert = () => {
   const alertElement = $('.alert-danger');
   alertElement.alert('close');
+};
+
+export const disableSearchBtn = () => {
+  const btn = document.querySelector('.search-form .btn');
+  btn.setAttribute('disabled', true);
+};
+
+export const unDisableSearchBtn = () => {
+  const btn = document.querySelector('.search-form .btn');
+  btn.removeAttribute('disabled');
 };

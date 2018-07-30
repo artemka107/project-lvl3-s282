@@ -1,5 +1,5 @@
 import validateSearchForm from './validation';
-import { getRssChannel } from './actions';
+import { getUpdatedArticles } from './actions';
 
 export const setArticleLocalId = (event, state) => {
   event.preventDefault();
@@ -16,28 +16,37 @@ export const onSubmitForm = (event, state) => {
 
   const searchInput = document.querySelector('.search-form-input');
   const url = searchInput.value;
-  const errorMessage = validateSearchForm(url, state.data.rssChannels);
+  const errorMessage = validateSearchForm(url, state.data.channels);
 
   if (errorMessage) {
-    state.changeState({ isValidForm: false, errorMessage });
+    state.changeState({
+      isValidForm: false,
+      errorMessage,
+    });
   } else {
-    state.changeState({ isLoading: true, alert: null });
-    getRssChannel(url)
-      .then((newChannel) => {
+    state.changeState({
+      isLoading: true,
+      alert: null,
+      isDisabledSearch: true,
+    });
+    state.changeState({ channels: [...state.data.channels, url] });
+    getUpdatedArticles(state)
+      .then(() => {
         state.changeState({
-          rssChannels: [...state.data.rssChannels, newChannel],
-          isValidForm: true,
-          errorMessage: '',
-          isLoading: false,
           alert: false,
-          searchString: '',
         });
       })
       .catch(() => {
         state.changeState({
           alert: 'fail',
-          isValidForm: true,
+        });
+      })
+      .finally(() => {
+        state.changeState({
+          searchString: '',
           errorMessage: '',
+          isValidForm: true,
+          isDisabledSearch: false,
           isLoading: false,
         });
       });

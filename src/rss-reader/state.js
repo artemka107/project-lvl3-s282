@@ -3,9 +3,12 @@ import { forIn } from 'lodash';
 export default () => ({
   data: {
     isValidForm: true,
+    hasChannels: false,
     errorMessage: '',
     searchString: '',
-    rssChannels: [],
+    articles: [],
+    updatedArticles: [],
+    channels: [],
     isLoading: false,
     isActiveModal: false,
     activeArticleId: '',
