@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { watch } from 'melanke-watchjs';
 import initState from './state';
+import { updateChannels } from './actions';
 import {
   showInvalidMessage,
   removeInvalidMessage,
@@ -9,13 +10,15 @@ import {
   renderModal,
   showModal,
   renderChannels,
+  showAlert,
+  hideAlert,
+  changeInputText,
 } from './dom';
 import {
   onSubmitForm,
-  setArticleLocalId,
+  onChangeInput,
+  hangEventsOnButtons,
 } from './eventHandlers';
-
-const state = initState();
 
 export const getActiveArticle = (targetState) => {
   const { activeArticleId } = targetState.data;
@@ -26,16 +29,19 @@ export const getActiveArticle = (targetState) => {
   return activeArticle;
 };
 
-export const initEventHandlers = () => {
+export const initEventHandlers = (state) => {
   const form = document.querySelector('.search-form');
+  const input = document.querySelector('.search-form-input');
   const modal = $('.modal');
+
   form.addEventListener('submit', event => onSubmitForm(event, state));
+  input.addEventListener('change', event => onChangeInput(event, state));
   modal.on('hidden.bs.modal', () => {
     state.changeState({ isActiveModal: false });
   });
 };
 
-export const watchState = () => {
+export const watchState = (state) => {
   watch(state.data, 'errorMessage', () => {
     if (!state.data.isValidForm) {
       showInvalidMessage(state.data.errorMessage);
@@ -52,6 +58,19 @@ export const watchState = () => {
     }
   });
 
+  watch(state.data, 'alert', (prop, action, isVisibleAlert) => {
+    if (isVisibleAlert) {
+      showAlert();
+    } else {
+      hideAlert();
+    }
+  });
+
+  watch(state.data, 'searchString', (prop, action, inputText) => {
+    changeInputText(inputText);
+  });
+
+
   watch(state.data, 'isActiveModal', (prop, action, isActiveModal) => {
     if (isActiveModal) {
       const { article } = getActiveArticle(state);
@@ -62,17 +81,13 @@ export const watchState = () => {
 
   watch(state.data, 'rssChannels', () => {
     renderChannels(state.data.rssChannels);
-    const articleBtns = [...document.querySelectorAll('.rss-container .btn')];
-    const hasArticles = articleBtns.length;
-    if (hasArticles) {
-      articleBtns.forEach((btn) => {
-        btn.addEventListener('click', event => setArticleLocalId(event, state));
-      });
-    }
+    hangEventsOnButtons(state);
+    setInterval(updateChannels, 5000, state.data.rssChannels, state);
   });
 };
 
 export const init = () => {
-  initEventHandlers();
-  watchState();
+  const state = initState();
+  initEventHandlers(state);
+  watchState(state);
 };

@@ -9,6 +9,7 @@ export default () => ({
     isLoading: false,
     isActiveModal: false,
     activeArticleId: '',
+    alert: null,
   },
 
   changeState(newData) {

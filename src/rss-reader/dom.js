@@ -11,7 +11,7 @@ export const createArticleBtn = (localId) => {
 export const createArticleTitle = (link, title) => {
   const a = document.createElement('a');
   const p = document.createElement('p');
-  a.setAttribute('herf', link);
+  a.setAttribute('href', link);
   a.innerHTML = title;
   p.appendChild(a);
   return p;
@@ -27,29 +27,24 @@ export const createArticle = (link, title, localId) => {
   return articleWrapper;
 };
 
-export const createArticlesList = (articles) => {
+export const createArticlesList = (articles, url) => {
   const articlesList = document.createElement('div');
   articlesList.classList.add('list-group');
+  articlesList.setAttribute('data-channel-url', url);
 
-  articles.forEach(({ article, localId }) => {
-    const articleElement = createArticle(article.link, article.title, localId);
+  articles.forEach(({ link, title, localId }) => {
+    const articleElement = createArticle(link, title, localId);
     articlesList.append(articleElement);
   });
 
   return articlesList;
 };
 
-export const renderArticlesList = (articles) => {
-  const articlesContainer = document.createElement('div');
-  const articlesList = createArticlesList(articles);
-  articlesContainer.appendChild(articlesList);
-  return articlesContainer;
-};
-
 export const renderChannels = (channels) => {
   const channelsContainer = document.querySelector('.rss-container');
-  channels.forEach(({ articles }) => {
-    const articlesList = renderArticlesList(articles);
+  channelsContainer.innerHTML = '';
+  channels.forEach(({ articles, url }) => {
+    const articlesList = createArticlesList(articles, url);
     channelsContainer.appendChild(articlesList);
   });
   return channelsContainer;
@@ -60,6 +55,23 @@ export const renderModal = (description) => {
   const p = document.createElement('p');
   p.innerHTML = description;
   modal.innerHTML = p.outerHTML;
+};
+
+export const renderAlert = () => {
+  const alertContainer = document.querySelector('.alert-container');
+  const alert = `
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>Error!</strong> Something went wrong
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div> `;
+  alertContainer.innerHTML = alert;
+};
+
+export const changeInputText = (text) => {
+  const searchInput = document.querySelector('.search-form-input');
+  searchInput.value = text;
 };
 
 
@@ -91,4 +103,13 @@ export const showProgressBar = () => {
 export const hideProgressBar = () => {
   const progressBar = document.querySelector('.progress');
   progressBar.classList.remove('d-flex');
+};
+
+export const showAlert = () => {
+  renderAlert();
+};
+
+export const hideAlert = () => {
+  const alertElement = $('.alert-danger');
+  alertElement.alert('close');
 };
