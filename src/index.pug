@@ -10,22 +10,23 @@ html
         aria-valuemax='100'
         style='width: 100%'
       )
-    nav.navbar.navbar-expand-lg.navbar-light.bg-light.pr-1
-      div.container.w-100
-        h1 Rss reader
-        form.search-form.row.align-items-start(novalidate)
-          div.col-md-4.col-lg-8
+    div.alert-container
+    div.jumbotron
+      div.container
+        h1.display-4 Rss reader
+        p.lead This is a simple rss reader.
+        hr.my-4
+        form.search-form(novalidate)
+          div.col-md-4.col-lg-5.pl-0.mb-3
             label.position-absolute(for='validationCustom01')
-            input#validationCustom01.form-control.search-form-input(
+            input#validationCustom01.form-control.search-form-input.py-2(
               type='search'
               placeholder='Enter rss feed'
               required
             )
             div.invalid-feedback
-          button.btn.btn-outline-success.col-lg-4(type='submit') Search
-    div.alert-container
-    div.jumbotron
-      div.container.rss-container
+          button.btn.d-block.btn-outline-success.col-lg-2(type='submit') Search
+    div.container.rss-container
     div.modal(tabindex='-1', role='dialog')
       div.modal-dialog(role='document')
         div.modal-content

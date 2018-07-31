@@ -39,6 +39,7 @@ export const onSubmitForm = (event, state) => {
       .catch(() => {
         state.changeState({
           alert: 'fail',
+          channels: state.data.channels.filter(channel => channel !== url),
         });
       })
       .finally(() => {
